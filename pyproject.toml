@@ -3,6 +3,7 @@ name = "distributedmlproject"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi>=0.136.3",
     "ipykernel>=7.2.0",
     "ipywidgets==8.1.8",
     "numpy>=2.4.6",
