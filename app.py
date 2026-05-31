@@ -14,7 +14,7 @@ app = FastAPI()
 
 @ray.serve.deployment
 class SpamClassifierService:
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         self.model = tf.keras.models.load_model(os.path.abspath("artifacts/model.keras"))
         self.vectorizer = tf.keras.layers.TextVectorization(max_tokens=10000, output_sequence_length=200)
         with open(os.path.abspath("artifacts/vocabulary.txt"), encoding="utf-8") as file:
@@ -39,6 +39,6 @@ class APIIngres:
     async def predict(self, payload: EmailService):
         return await self.model_handle.predict_spam.remote(payload)
 
-
+ray.serve.start(http_options={"host": "0.0.0.0", "port": 8000})
 model_deployment = SpamClassifierService.bind()
 deployment_instance = APIIngres.bind(model_deployment)
