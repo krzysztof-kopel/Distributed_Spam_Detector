@@ -260,7 +260,7 @@ requires-dist = [
     { name = "pandas", specifier = "==3.0.3" },
     { name = "pandas-stubs", specifier = "~=3.0.3" },
     { name = "pyarrow", specifier = "==24.0.0" },
-    { name = "ray", extras = ["client"], specifier = "==2.55.1" },
+    { name = "ray", extras = ["client"], specifier = ">=2.55.1" },
     { name = "scikit-learn", specifier = "==1.9.0rc1" },
     { name = "tqdm", specifier = "==4.67.3" },
 ]

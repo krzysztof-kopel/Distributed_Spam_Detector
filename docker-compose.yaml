@@ -1,14 +1,25 @@
 services:
   ray-head:
-    image: rayproject/ray:nightly-py312-cu129
+    image: rayproject/ray:2.55.1-py312
+    container_name: ray-head
     ports:
-      - "${REDISPORT}:${REDISPORT}"
       - "${DASHBOARDPORT}:${DASHBOARDPORT}"
       - "${HEADNODEPORT}:${HEADNODEPORT}"
+      - "${REDISPORT}:${REDISPORT}"
     env_file:
       - .env
-    command: bash -c "ray start --head --dashboard-port=${DASHBOARDPORT} --port=${REDISPORT} --dashboard-host=0.0.0.0 --redis-password=${REDISPASSWORD} --block"
+    volumes:
+      - .:/app
+    working_dir: /app
     shm_size: 2g
+    command: >
+      bash -c "ray start --head 
+      --port=${REDISPORT} 
+      --dashboard-port=${DASHBOARDPORT} 
+      --dashboard-host=0.0.0.0 
+      --ray-client-server-port=${HEADNODEPORT} 
+      --redis-password=${REDISPASSWORD} 
+      --block"
     deploy:
       resources:
         limits:
@@ -18,20 +29,29 @@ services:
       - ray_net
 
   ray-worker:
-    image: rayproject/ray:nightly-py312-cu129
+    image: rayproject/ray:2.55.1-py312
+    container_name: ray-worker
     depends_on:
       - ray-head
     env_file:
       - .env
-    command: bash -c "ray start --address=ray-head:${REDISPORT} --redis-password=${REDISPASSWORD} --num-cpus=${NUM_CPU_WORKER} --block"
+    volumes:
+      - .:/app
+    working_dir: /app
     shm_size: 2g
+    command: >
+      bash -c "ray start 
+      --address=ray-head:${REDISPORT} 
+      --redis-password=${REDISPASSWORD} 
+      --num-cpus=${NUM_CPU_WORKER} 
+      --block"
     deploy:
       mode: replicated
       replicas: ${NUM_WORKERS}
       resources:
         limits:
-          cpus: ${NUM_CPU_WORKER}
-          memory: '2g'
+          cpus: '3'
+          memory: '3g'
     networks:
       - ray_net
 
