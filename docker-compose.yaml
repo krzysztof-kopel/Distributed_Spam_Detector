@@ -11,7 +11,7 @@ services:
     volumes:
       - .:/app
     working_dir: /app
-    shm_size: 2g
+    shm_size: 4g
     command: >
       bash -c "ray start --head 
       --port=${REDISPORT} 
@@ -38,7 +38,7 @@ services:
     volumes:
       - .:/app
     working_dir: /app
-    shm_size: 2g
+    shm_size: 4g
     command: >
       bash -c "ray start 
       --address=ray-head:${REDISPORT} 
@@ -51,7 +51,7 @@ services:
       resources:
         limits:
           cpus: '3'
-          memory: '3g'
+          memory: '6g'
     networks:
       - ray_net
 
